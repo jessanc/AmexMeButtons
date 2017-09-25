@@ -1,0 +1,19 @@
+{
+  "name": "amexme",
+  "version": "1.0.0",
+  "description": "AmexMe Buttons test",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jsn",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.4",
+    "firebase": "^4.4.0",
+    "mongoose": "^4.11.12",
+    "nodemon": "^1.12.1",
+    "promise": "^8.0.1"
+  }
+}
