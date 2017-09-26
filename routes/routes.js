@@ -91,9 +91,10 @@ router.post('/tagMe',function(req,res){
   var transactionModel = mongoose.model('Transaction');
   console.log(req.body);
   var id = req.body.ID;
+  var category = req.body.category;
   var objID = mongoose.Types.ObjectId(id);
   console.log("ID received : " + objID);
-  transactionModel.update({_id: id},{Flag : true },
+  transactionModel.update({_id: id},{Flag : true , TagCategory : category},
      {multi:true},
        function(err, numberAffected){
          if(err)
@@ -125,8 +126,8 @@ router.post('/callMe',function(req,res){
 
   promise.then(function(doc){
     console.log(doc);
-    //call(doc);
-    text2Speech(doc);
+    call(doc);
+    // text2Speech(doc);
   })
   res.sendStatus(200);
 })
@@ -167,7 +168,7 @@ function call(transaction){
 router.post('/voice', (request, response) => {
 
   // Use the Twilio Node.js SDK to build an XML response
-  let twiml = new twilio.TwimlResponse();
+  var twiml = new twilio.twiml.VoiceResponse();
   twiml.say(`This is a test tosee if voice to speech really works`, {
     voice: 'alice'
   });
@@ -186,7 +187,7 @@ function text2Speech(transaction){
   var client = new twilio(ACCOUNT_SID, AUTH_TOKEN);
 
   client.calls.create({
-      url: "13.58.150.184:1234/voice",
+      url: "http://13.58.150.184:1234/voice",
       to: "+19542344105",
       from: TWILIO_NUMBER
   }, function(err, call) {
@@ -198,7 +199,7 @@ function text2Speech(transaction){
           console.log(call.sid);
       } else {
           console.log('Oops! There was an error.');
-          console.log(error);
+          console.log(err);
       }
   });
 }
