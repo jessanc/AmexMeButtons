@@ -125,13 +125,15 @@ router.post('/callMe',function(req,res){
 
   promise.then(function(doc){
     console.log(doc);
-    call(doc);
+    //call(doc);
+    text2Speech(doc);
   })
   res.sendStatus(200);
 })
+
 function call(transaction){
   var URL = "https://poised-yarn-8449.twil.io/assets/avaintro.mp3";
-  if(transaction.Merchant == "Home Depot";
+  if(transaction.Merchant == "Home Depot")
     URL = "https://poised-yarn-8449.twil.io/assets/homedepot.mp3";
   else if (transaction.Merchant == "AB Financial")
     URL = "https://poised-yarn-8449.twil.io/assets/ABFinancial.mp3";
@@ -161,6 +163,46 @@ function call(transaction){
       }
   });
 }
+
+router.post('/voice', (request, response) => {
+
+  // Use the Twilio Node.js SDK to build an XML response
+  let twiml = new twilio.TwimlResponse();
+  twiml.say(`This is a test tosee if voice to speech really works`, {
+    voice: 'alice'
+  });
+  twiml.play('https://demo.twilio.com/docs/classic.mp3');
+
+  // Render the response as XML in reply to the webhook request
+  response.type('text/xml');
+  response.send(twiml.toString());
+});
+
+function text2Speech(transaction){
+  var ACCOUNT_SID = "AC710bb21579f2b277fc1f6388ad783398";
+  var AUTH_TOKEN = "cd4155173f2582ecc256e43f400b4340";
+  var TWILIO_NUMBER = "+15615624153";
+  var APPLICATION_SID = "AP4312e72c31b282f9f1edaeb5a5afe48b";
+  var client = new twilio(ACCOUNT_SID, AUTH_TOKEN);
+
+  client.calls.create({
+      url: "13.58.150.184:1234/voice",
+      to: "+19542344105",
+      from: TWILIO_NUMBER
+  }, function(err, call) {
+      if (!err) {
+          // The second argument to the callback will contain the information
+          // sent back by Twilio for the request. In this case, it is the
+          // information about the phone call you just made:
+          console.log('Success! There was a call: ');
+          console.log(call.sid);
+      } else {
+          console.log('Oops! There was an error.');
+          console.log(error);
+      }
+  });
+}
+
 // Define the about route
 router.get('/about', function(req, res) {
   res.send('About us');
