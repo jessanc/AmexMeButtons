@@ -36,7 +36,21 @@ router.get('/transactions',function(req,res){
             res.json(transaction);
         });
 });
-
+router.get('/transaction',function(req,res){
+  var transactionModel = mongoose.model('Transaction');
+    console.log(req.query);
+  var id = req.query.ID;
+  var objID = mongoose.Types.ObjectId(id);
+  console.log("ID received : " + objID);
+  transactionModel.findById(objID,
+       function(err, trans){
+         if(err)
+         console.log(err);
+         console.log(trans);
+         res.status(200);
+         res.json(trans);
+       });
+})
 router.post('/transaction',function(req,res){
 	var transactionModel = mongoose.model('Transaction');
   var transaction = new transactionModel();
@@ -97,11 +111,14 @@ router.post('/callMe',function(req,res){
   var id = req.body.ID;
   var objID = mongoose.Types.ObjectId(id);
   console.log("ID received for callme: " + objID);
-    transactionModel.findById(objID, function (err, trans){
-      if(err)
-      console.log(err);
-      console.log("Transaction found with id(callme) : " + trans);
-  });
+  transactionModel.update({_id: id},{CallBack : true },
+     {multi:true},
+       function(err, numberAffected){
+         if(err)
+         console.log(err);
+         console.log(numberAffected);
+       });
+
   res.sendStatus(200);
 })
 // Define the about route
