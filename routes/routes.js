@@ -6,7 +6,6 @@ var admin = require('firebase-admin');
 var serviceAccount = require("../key.json");
 var twilio = require('twilio');
 
-
 //firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -17,6 +16,8 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 //Middle ware that is specific to this router
 router.use(function timeLog(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   console.log('Time: ', Date.now());
   next();
 });
@@ -97,8 +98,13 @@ router.post('/tagMe',function(req,res){
        function(err, numberAffected){
          if(err)
          console.log(err);
-         console.log(numberAffected);
        });
+       var query = transactionModel.findById(objID);
+       var promise = query.exec();
+
+       promise.then(function(doc){
+         console.log(doc);
+       })
 
   res.sendStatus(200);
 });
@@ -108,15 +114,22 @@ router.post('/callMe',function(req,res){
   var id = req.body.ID;
   var objID = mongoose.Types.ObjectId(id);
   console.log("ID received for callme: " + objID);
-  transactionModel.update({_id: id},{CallBack : true },
+ transactionModel.update({_id: id},{CallBack : true },
      {multi:true},
-       function(err, numberAffected){
+       function(err, documents){
          if(err)
          console.log(err);
-         console.log(numberAffected);
        });
+  var query = transactionModel.findById(objID);
+  var promise = query.exec();
 
+  promise.then(function(doc){
+    console.log(doc);
+    call(doc);
+  })
   res.sendStatus(200);
+})
+function call(transaction){
   var ACCOUNT_SID = "AC710bb21579f2b277fc1f6388ad783398";
   var AUTH_TOKEN = "cd4155173f2582ecc256e43f400b4340";
   var TWILIO_NUMBER = "+15615624153";
@@ -139,7 +152,7 @@ router.post('/callMe',function(req,res){
           console.log(error);
       }
   });
-})
+}
 // Define the about route
 router.get('/about', function(req, res) {
   res.send('About us');
