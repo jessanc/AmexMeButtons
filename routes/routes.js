@@ -4,6 +4,8 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var admin = require('firebase-admin');
 var serviceAccount = require("../key.json");
+var twilio = require('twilio');
+
 
 //firebase
 admin.initializeApp({
@@ -92,17 +94,40 @@ router.post('/tagMe',function(req,res){
   res.sendStatus(200);
 });
 router.post('/callMe',function(req,res){
-  var transactionModel = mongoose.model('Transaction');
-  console.log(req.body);
-  var id = req.body.ID;
-  var objID = mongoose.Types.ObjectId(id);
-  console.log("ID received for callme: " + objID);
-    transactionModel.findById(objID, function (err, trans){
-      if(err)
-      console.log(err);
-      console.log("Transaction found with id(callme) : " + trans);
+  var ACCOUNT_SID = "AC710bb21579f2b277fc1f6388ad783398";
+  var AUTH_TOKEN = "cd4155173f2582ecc256e43f400b4340";
+  var TWILIO_NUMBER = "+15615624153";
+  var APPLICATION_SID = "AP4312e72c31b282f9f1edaeb5a5afe48b";
+  var client = new twilio(ACCOUNT_SID, AUTH_TOKEN);
+
+  client.calls.create({
+      url: "https://poised-yarn-8449.twil.io/assets/avaintro.mp3",
+      to: "+19542344105",
+      from: TWILIO_NUMBER
+  }, function(err, call) {
+      if (!err) {
+          // The second argument to the callback will contain the information
+          // sent back by Twilio for the request. In this case, it is the
+          // information about the text messsage you just sent:
+          console.log('Success! There was a call: ');
+          console.log(call.sid);
+      } else {
+          console.log('Oops! There was an error.');
+          console.log(error);
+      }
   });
-  res.sendStatus(200);
+
+  // var transactionModel = mongoose.model('Transaction');
+  // console.log(req.body);
+  // var id = req.body.ID;
+  // var objID = mongoose.Types.ObjectId(id);
+  // console.log("ID received for callme: " + objID);
+  //   transactionModel.findById(objID, function (err, trans){
+  //     if(err)
+  //     console.log(err);
+  //     console.log("Transaction found with id(callme) : " + trans);
+  // });
+  // res.sendStatus(200);
 })
 // Define the about route
 router.get('/about', function(req, res) {
