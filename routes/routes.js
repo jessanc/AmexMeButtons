@@ -131,7 +131,7 @@ router.post('/callMe',function(req,res){
 })
 function call(transaction){
   var URL = "https://poised-yarn-8449.twil.io/assets/avaintro.mp3";
-  if(transaction.Merchant == "Home Depot";
+  if(transaction.Merchant == "Home Depot")
     URL = "https://poised-yarn-8449.twil.io/assets/homedepot.mp3";
   else if (transaction.Merchant == "AB Financial")
     URL = "https://poised-yarn-8449.twil.io/assets/ABFinancial.mp3";
